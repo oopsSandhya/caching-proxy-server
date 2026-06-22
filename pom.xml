@@ -44,6 +44,12 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Redis — distributed cache -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
         <!-- Spring Boot Test — JUnit 5 + Mockito -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
