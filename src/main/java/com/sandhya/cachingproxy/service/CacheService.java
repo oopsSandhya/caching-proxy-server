@@ -4,6 +4,7 @@ import com.sandhya.cachingproxy.model.CachedResponse;
 import com.sandhya.cachingproxy.model.CacheStats;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -64,5 +65,30 @@ public class CacheService {
 
     public String buildKey(String method, String url) {
         return method.toUpperCase() + ":" + url;
+    }
+
+    // ── Scheduled TTL Eviction ────────────────────────────────────────────
+
+    @Scheduled(fixedDelay = 30000)
+    public void evictExpiredEntries() {
+        log.info("Running scheduled cache cleanup...");
+        int before = cache.size();
+
+        cache.entrySet().removeIf(entry -> {
+            boolean expired = entry.getValue().isExpired(ttlSeconds);
+            if (expired) {
+                log.debug("Evicting expired key: {}", entry.getKey());
+            }
+            return expired;
+        });
+
+        int after = cache.size();
+        int removed = before - after;
+
+        if (removed > 0) {
+            log.info("Evicted {} expired entries. Cache size: {}", removed, after);
+        } else {
+            log.info("No expired entries found. Cache size: {}", after);
+        }
     }
 }
