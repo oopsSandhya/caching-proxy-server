@@ -18,7 +18,7 @@ Instead of hitting the origin server every single time, the proxy:
 3. If **YES (HIT)** → returns the cached response instantly ⚡
 4. If **NO (MISS)** → forwards to origin, caches the response, then returns it
 
-This dramatically reduces:
+This help reduce:
 - ⏱️ Response time (from ~1000ms to ~9ms in tests)
 - 🔁 Redundant network calls to origin
 - 💸 Origin server load and cost
@@ -37,7 +37,7 @@ This project demonstrates:
 - Distributed caching with Redis
 - Real HTTP header manipulation (`X-Cache: HIT/MISS`)
 - TTL-based cache expiration
-- Production-level Spring Boot architecture
+- Layered Spring Boot architecture (Controller, Service, Config, Model)
 
 ---
 
@@ -145,13 +145,13 @@ Client
 | Technology | Version | Why used |
 |---|---|---|
 | **Java** | 21 | Latest LTS — Virtual threads, Records support |
-| **Spring Boot** | 3.2.5 | Production-grade framework, auto-configuration |
+| **Spring Boot** | 3.2.5 | Backend application framework with dependency injection and auto-configuration |
 | **Spring Web** | 6.1.6 | REST controllers, RestTemplate for HTTP calls |
-| **Redis** | 7.0 | Distributed in-memory data store for caching |
+| **Redis** | 7.0 |External cache store used for fast response retrieval |
 | **Spring Data Redis** | 3.2.5 | Spring's Redis integration layer |
 | **Docker** | 29.5 | Runs Redis container locally |
 | **Lombok** | Latest | Eliminates boilerplate (@Getter, @Builder, @Slf4j) |
-| **Spring Actuator** | 3.2.5 | Production monitoring endpoints |
+| **Spring Actuator** | 3.2.5 | Health check and monitoring end points |
 | **Maven** | 3.9 | Build and dependency management |
 
 ---
@@ -270,7 +270,7 @@ HashMap          → NOT thread-safe → race conditions under concurrent reques
 
 synchronizedMap  → locks ENTIRE map → poor throughput
 
-ConcurrentHashMap → segment-level locking → high throughput, thread-safe
+ConcurrentHashMap → thread-safe access with better performance than synchronizedMap under concurrent requests
 
 ### Why only cache GET requests?
 GET    → Idempotent, safe → CACHEABLE ✅
@@ -525,7 +525,7 @@ Tested with `GET /proxy/posts/1` against `jsonplaceholder.typicode.com`:
 
 ## 👩‍💻 Author
 
-**Sandhya** — Backend Developer
+**Sandhya** 
 
 - GitHub: [@oopsSandhya](https://github.com/oopsSandhya)
 
@@ -533,4 +533,4 @@ Tested with `GET /proxy/posts/1` against `jsonplaceholder.typicode.com`:
 
 ## 📄 License
 
-This project is open source and available under the [MIT License](LICENSE).
+ [MIT License](LICENSE).
